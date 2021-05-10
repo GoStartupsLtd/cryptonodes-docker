@@ -5,6 +5,7 @@ ENV RPC_PASS=pass
 ENV RPC_PORT=9332
 ENV RPC_ALLOW_IP=127.0.0.1
 ENV TESTNET=0
+ENV EXTRAFLAGS=""
 
 RUN apt-get update && apt-get upgrade && apt-get install -y wget
 RUN wget https://download.litecoin.org/litecoin-0.18.1/linux/litecoin-0.18.1-x86_64-linux-gnu.tar.gz
@@ -20,4 +21,5 @@ ENTRYPOINT litecoind -rpcuser="$RPC_USER" \
     -rpcbind=0.0.0.0 \
     -listen \
     -server \
-    -testnet=${TESTNET}
+    -testnet=${TESTNET} \
+    ${EXTRAFLAGS}

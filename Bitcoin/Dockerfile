@@ -7,6 +7,7 @@ ENV RPC_ALLOW_IP=127.0.0.1
 ENV ZMQ_PORT=29000
 ENV ZMQ_ADDRESS=localhost
 ENV TESTNET=0
+ENV EXTRAFLAGS=""
 
 RUN apt-get update && apt-get upgrade && apt-get install -y wget
 RUN wget https://bitcoin.org/bin/bitcoin-core-0.21.0/bitcoin-0.21.0-x86_64-linux-gnu.tar.gz
@@ -28,4 +29,5 @@ ENTRYPOINT bitcoind -rpcuser="$RPC_USER" \
     -zmqpubrawblock="tcp://${ZMQADDRESS}:${ZMQ_PORT}" \
     -zmqpubrawtx="tcp://${ZMQADDRESS}:${ZMQ_PORT}" \
     -zmqpubsequence="tcp://${ZMQADDRESS}:${ZMQ_PORT}" \
-    -testnet=${TESTNET}
+    -testnet=${TESTNET} \
+    ${EXTRAFLAGS}
