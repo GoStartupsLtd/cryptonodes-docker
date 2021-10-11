@@ -12,7 +12,7 @@ on:
         default: 'latest'
     
 jobs:
-  build-backend:
+  build_coins:
     runs-on: ubuntu-latest
     strategy:
       matrix:
