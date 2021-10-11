@@ -31,7 +31,7 @@ jobs:
         name: Login to DockerHub
         uses: docker/login-action@v1
         with:
-          username: gostartups
+          username: martinkey
           password: ${{ secrets.SECRET }}
       -
         name: Build and push latest
