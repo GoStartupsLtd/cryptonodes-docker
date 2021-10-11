@@ -16,7 +16,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        coins: [bitcoin, litecoin, dogecoin, ethereum, bitcoingold]
+        include:
+          - coin: "bitcoin"
+            context: "./Bitcoin"
+          - coin: "litecoin"
+            context: "./Litecoin"
+          - coin: "dogecoin"
+            context: "./Dogecoin"
+          - coin: "ethereum"
+            context: "./Ethereum"
+          - coin: "bitcoingold"
+            context: "./BitcoinGold"
     steps:
       -
         name: Checkout
@@ -37,15 +47,15 @@ jobs:
         name: Build and push latest
         uses: docker/build-push-action@v2
         with:
-          context: "."
+          context: ${{ matrix.context }}
           push: true
-          tags: gostartups/${{ matrix.coins }}-core:latest
+          tags: gostartups/${{ matrix.coin }}-core:latest
       - 
         name: Build and push with Tag
         uses: docker/build-push-action@v2
         if: 
           ${{ github.event.input.image_tag != null }}
         with:
-          context: "."
+          context: ${{ matrix.context }}
           push: true
-          tags: gostartups/${{ matrix.coins }}:${{ github.event.inputs.image_tag }}
+          tags: gostartups/${{ matrix.coin }}:${{ github.event.inputs.image_tag }}
