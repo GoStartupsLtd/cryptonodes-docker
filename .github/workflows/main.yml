@@ -27,6 +27,8 @@ jobs:
             context: "./Ethereum"
           - coin: "bitcoingold"
             context: "./BitcoinGold"
+          - coin: "bitcoincash"
+            context: "./BitcoinCash"
     steps:
       -
         name: Checkout
