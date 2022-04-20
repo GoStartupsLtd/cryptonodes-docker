@@ -21,6 +21,6 @@ ENV SYNCMODE=snap
 ENV EXTRAFLAGS=""
 
 EXPOSE 8545 8546 30303 30303/udp
-ENTRYPOINT geth --ipcdisable --syncmode ${SYNCMODE} --nat none --txlookuplimit 0 --cache 4096 --port ${PORT} \
+ENTRYPOINT geth --ipcdisable --syncmode ${SYNCMODE} --nat none --txlookuplimit 0 --cache 16000 --port ${PORT} \
 --http --http.addr ${ADDRESS} --http.port=${HTTP_PORT} --http.vhosts '*' --http.corsdomain '*' \
 --ws --ws.addr ${ADDRESS} --ws.port ${WS_PORT} --ws.origins '*' ${EXTRAFLAGS}
