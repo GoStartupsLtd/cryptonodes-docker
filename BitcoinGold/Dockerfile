@@ -1,5 +1,6 @@
 FROM debian:9-slim
 
+ENV DEBIAN_FRONTEND=noninteractive
 ENV RPC_USER=user
 ENV RPC_PASS=pass
 ENV RPC_PORT=8332
