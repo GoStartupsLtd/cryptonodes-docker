@@ -13,7 +13,7 @@ on:
     
 jobs:
   build_coins:
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
