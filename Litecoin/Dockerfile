@@ -1,4 +1,4 @@
-FROM debian:9-slim
+FROM debian:9
 
 ENV RPC_USER=user
 ENV RPC_PASS=pass
@@ -8,7 +8,7 @@ ENV TESTNET=0
 ENV EXTRAFLAGS=""
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get upgrade && apt-get install -y wget
+RUN apt update && apt upgrade && apt install -y wget
 RUN wget https://download.litecoin.org/litecoin-0.18.1/linux/litecoin-0.18.1-x86_64-linux-gnu.tar.gz
 RUN tar xzf litecoin-0.18.1-x86_64-linux-gnu.tar.gz
 RUN install -m 0755 -o root -g root -t /usr/local/bin litecoin-0.18.1/bin/*
