@@ -8,6 +8,7 @@ ENV ZMQ_PORT=29000
 ENV ZMQ_ADDRESS=localhost
 ENV TESTNET=0
 ENV EXTRAFLAGS=""
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get upgrade && apt-get install -y wget
 RUN wget https://bitcoin.org/bin/bitcoin-core-0.21.0/bitcoin-0.21.0-x86_64-linux-gnu.tar.gz
