@@ -1,5 +1,7 @@
 FROM golang:1.16-alpine as builder
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 WORKDIR /home/
 RUN apk add --no-cache make gcc musl-dev linux-headers git
 
