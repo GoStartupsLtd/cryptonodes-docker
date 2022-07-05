@@ -8,6 +8,7 @@ ENV ZMQ_PORT=29001
 ENV ZMQ_ADDRESS=localhost
 ENV TESTNET=0
 ENV EXTRAFLAGS=""
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get upgrade && apt-get install -y wget
 RUN wget https://github.com/bitcoin-cash-node/bitcoin-cash-node/releases/download/v24.0.0/bitcoin-cash-node-24.0.0-x86_64-linux-gnu.tar.gz
