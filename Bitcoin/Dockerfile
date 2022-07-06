@@ -10,7 +10,7 @@ ENV TESTNET=0
 ENV EXTRAFLAGS=""
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt update && apt upgrade && apt install -y wget
+RUN apt-get update && apt-get -y upgrade && apt-get install -y wget
 RUN wget https://bitcoin.org/bin/bitcoin-core-0.21.0/bitcoin-0.21.0-x86_64-linux-gnu.tar.gz
 RUN tar xzf bitcoin-0.21.0-x86_64-linux-gnu.tar.gz
 RUN install -m 0755 -o root -g root -t /usr/local/bin bitcoin-0.21.0/bin/*
