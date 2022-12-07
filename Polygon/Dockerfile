@@ -55,7 +55,6 @@ RUN sed -i "/26657/c\laddr = \"${HEIMDALL_BRIDGE}\"" /root/.heimdalld/config/con
 RUN cd /root \
     && echo 'sed -i "/seeds =/c\seeds = \"${HEIMDALL_SEEDS}\"" /root/.heimdalld/config/config.toml \
     && sed -i "/26657/c\laddr = \"${HEIMDALL_BRIDGE}\"" /root/.heimdalld/config/config.toml \
-    && sed -i "/max_open_connections =/c\max_open_connections = \"${HEIMDALL_OPEN_CONNECTIONS}}\"" /root/.heimdalld/config/config.toml \
     && sed -i "/bor_rpc_url/c\bor_rpc_url = \"${HEIMDALL_BOR_RPC_URL}\"" /root/.heimdalld/config/config.toml \
     && sed -i "/eth_rpc_url/c\eth_rpc_url = \"${HEIMDALL_ETH_RPC_URL}\"" /root/.heimdalld/config/config.toml' >> heimdall-configuration && chmod +x ./heimdall-configuration
 
