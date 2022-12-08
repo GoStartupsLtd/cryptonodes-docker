@@ -10,10 +10,10 @@ ENV TESTNET=0
 ENV EXTRAFLAGS=""
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt update && apt upgrade && apt install -y wget
-RUN wget https://bitcoin.org/bin/bitcoin-core-0.21.0/bitcoin-0.21.0-x86_64-linux-gnu.tar.gz
-RUN tar xzf bitcoin-0.21.0-x86_64-linux-gnu.tar.gz
-RUN install -m 0755 -o root -g root -t /usr/local/bin bitcoin-0.21.0/bin/*
+RUN apt update && apt upgrade -y && apt install -y wget
+RUN wget https://bitcoincore.org/bin/bitcoin-core-23.0/bitcoin-23.0-x86_64-linux-gnu.tar.gz
+RUN tar xzf bitcoin-23.0-x86_64-linux-gnu.tar.gz
+RUN install -m 0755 -o root -g root -t /usr/local/bin bitcoin-23.0/bin/*
 
 EXPOSE ${RPC_PORT}
 EXPOSE ${ZMQ_PORT}
