@@ -7,6 +7,7 @@ ENV HEIMDALL_BOR_RPC_URL=http://bor0:8545
 ENV HEIMDALL_ETH_RPC_URL=http://localhost:9545
 ENV HEIMDALL_BRIDGE=tcp://0.0.0.0:26657
 ENV HEIMDALL_OPEN_CONNECTIONS=0
+ENV HEIMDALL_HOME=/root/.heimdalld
 
 ENV BOR_SETUP https://raw.githubusercontent.com/maticnetwork/launch/master/mainnet-v1/sentry/sentry/bor/setup.sh
 ENV BOR_START https://raw.githubusercontent.com/maticnetwork/launch/master/mainnet-v1/sentry/sentry/bor/start.sh
@@ -14,6 +15,13 @@ ENV BOR_GENESIS https://raw.githubusercontent.com/maticnetwork/launch/master/mai
 ENV BOR_STATIC_FILE https://raw.githubusercontent.com/maticnetwork/launch/master/mainnet-v1/sentry/sentry/bor/static-nodes.json
 ENV BOR_MODE "full"
 ENV BOR_BOOTNODES "enode://0cb82b395094ee4a2915e9714894627de9ed8498fb881cec6db7c65e8b9a5bd7f2f25cc84e71e89d0947e51c76e85d0847de848c7782b13c0255247a6758178c@44.232.55.71:30303,enode://88116f4295f5a31538ae409e4d44ad40d22e44ee9342869e7d68bdec55b0f83c1530355ce8b41fbec0928a7d75a5745d528450d30aec92066ab6ba1ee351d710@159.203.9.164:30303"
+
+ENV HTTP_PORT=8542
+ENV WS_PORT=8545
+ENV ADDRESS=127.0.0.1
+ENV PORT=30301
+ENV SYNCMODE=full
+ENV EXTRAFLAGS=""
 
 WORKDIR /root/
 
@@ -45,25 +53,15 @@ RUN mkdir /root/logs \
     && touch /root/logs/bridge.log \
     && touch /root/logs/bor.log
 
+#setup heimdall config and home directory
+RUN heimdalld init --home ${HEIMDALL_HOME} --chain-id ${HEIMDALL_CHAIN_ID}
+# download heimdall genesis file
+RUN wget -q -O ${HEIMDALL_HOME}/config/genesis.json ${HEIMDALL_GENESIS_URL} -P ${HEIMDALL_HOME}/config
 
-RUN heimdalld init --home /root/.heimdalld --chain-id ${HEIMDALL_CHAIN_ID}  
-# setup config files
-RUN wget -q -O /root/.heimdalld/config/genesis.json ${HEIMDALL_GENESIS_URL} -P /root/.heimdalld/config
+RUN cp -r ${HEIMDALL_HOME} /root/heimdall-data/
 
-RUN sed -i "/26657/c\laddr = \"${HEIMDALL_BRIDGE}\"" /root/.heimdalld/config/config.toml
+ADD polygon.sh .
 
-RUN cd /root \
-    && echo 'sed -i "/seeds =/c\seeds = \"${HEIMDALL_SEEDS}\"" /root/.heimdalld/config/config.toml \
-    && sed -i "/26657/c\laddr = \"${HEIMDALL_BRIDGE}\"" /root/.heimdalld/config/config.toml \
-    && sed -i "/bor_rpc_url/c\bor_rpc_url = \"${HEIMDALL_BOR_RPC_URL}\"" /root/.heimdalld/config/config.toml \
-    && sed -i "/eth_rpc_url/c\eth_rpc_url = \"${HEIMDALL_ETH_RPC_URL}\"" /root/.heimdalld/config/config.toml' >> heimdall-configuration && chmod +x ./heimdall-configuration
-
-RUN echo "./heimdall-configuration \
-    \n  heimdalld start 2>&1 | tee /root/logs/heimdalld.log & \
-    \n  heimdalld rest-server 2>&1 | tee /root/logs/rest-server.log & \
-    \n  bridge start 2>&1 | tee /root/logs/bridge.log & \
-    \n  bor server 2>&1 | tee /root/logs/bor.log" > polygon.sh \
-    && chmod +x ./polygon.sh
-
+RUN chmod +x ./polygon.sh
 
 CMD ./polygon.sh
