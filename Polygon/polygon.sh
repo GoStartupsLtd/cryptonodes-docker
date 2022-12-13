@@ -1,9 +1,4 @@
 #!/bin/bash
-mkdir -p /root/logs \
-    && touch /root/logs/heimdalld.log \
-    && touch /root/logs/rest-server.log \
-    && touch /root/logs/bridge.log \
-    && touch /root/logs/bor.log
 #start heimdall, heimdall rest server with logs.
 heimdalld start 2>&1 | tee /root/logs/heimdalld.log &
     heimdalld rest-server 2>&1 | tee /root/logs/rest-server.log &

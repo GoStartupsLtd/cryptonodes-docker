@@ -52,7 +52,7 @@ RUN cd heimdall \
     && git checkout mainnet-alchemy \
     && make install
 
-RUN mkdir /root/logs \
+RUN mkdir -p /root/logs \
     && touch /root/logs/heimdalld.log \
     && touch /root/logs/rest-server.log \
     && touch /root/logs/bridge.log \
