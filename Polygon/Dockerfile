@@ -4,10 +4,14 @@ ENV HEIMDALL_GENESIS_URL=https://raw.githubusercontent.com/maticnetwork/launch/m
 ENV HEIMDALL_CHAIN_ID=heimdall-137
 ENV HEIMDALL_SEEDS="f4f605d60b8ffaaf15240564e58a81103510631c@159.203.9.164:26656,4fb1bc820088764a564d4f66bba1963d47d82329@44.232.55.71:26656,2eadba4be3ce47ac8db0a3538cb923b57b41c927@35.199.4.13:26656,3b23b20017a6f348d329c102ddc0088f0a10a444@35.221.13.28:26656,25f5f65a09c56e9f1d2d90618aa70cd358aa68da@35.230.116.151:26656"
 ENV HEIMDALL_BOR_RPC_URL=http://bor0:8545
-ENV HEIMDALL_ETH_RPC_URL=http://localhost:9545
+ENV HEIMDALL_ETH_RPC_URL=http://localhost:8546
 ENV HEIMDALL_BRIDGE=tcp://0.0.0.0:26657
 ENV HEIMDALL_OPEN_CONNECTIONS=0
 ENV HEIMDALL_HOME=/root/.heimdalld
+# 0 max open connections means infinite.
+ENV HEIMDALL_MAX_OPEN_CONNECTIONS=0
+ENV HEIMDALL_MAX_INBOUND_PEERS=300
+ENV HEIMDALL_MAX_OUTBOUND_PEERS=300
 
 ENV BOR_SETUP https://raw.githubusercontent.com/maticnetwork/launch/master/mainnet-v1/sentry/sentry/bor/setup.sh
 ENV BOR_START https://raw.githubusercontent.com/maticnetwork/launch/master/mainnet-v1/sentry/sentry/bor/start.sh
@@ -27,6 +31,7 @@ WORKDIR /root/
 
 # Bor/heimdall peer network port
 EXPOSE 30303
+EXPOSE 30301
 # RPC server
 EXPOSE 8545
 #WS server
@@ -55,13 +60,21 @@ RUN mkdir /root/logs \
 
 #setup heimdall config and home directory
 RUN heimdalld init --home ${HEIMDALL_HOME} --chain-id ${HEIMDALL_CHAIN_ID}
+
 # download heimdall genesis file
 RUN wget -q -O ${HEIMDALL_HOME}/config/genesis.json ${HEIMDALL_GENESIS_URL} -P ${HEIMDALL_HOME}/config
 
-RUN cp -r ${HEIMDALL_HOME} /root/heimdall-data/
 
 ADD polygon.sh .
 
 RUN chmod +x ./polygon.sh
+
+RUN sed -i "/seeds =/c\seeds = \"${HEIMDALL_SEEDS}\"" ${HEIMDALL_HOME}/config/config.toml \
+    && sed -i "/26657/c\laddr = \"${HEIMDALL_BRIDGE}\"" ${HEIMDALL_HOME}/config/config.toml \
+    && sed -i "/bor_rpc_url/c\bor_rpc_url = \"${HEIMDALL_BOR_RPC_URL}\"" ${HEIMDALL_HOME}/config/config.toml \
+    && sed -i "/eth_rpc_url/c\eth_rpc_url = \"${HEIMDALL_ETH_RPC_URL}\"" ${HEIMDALL_HOME}/config/config.toml \
+    && sed -i "/^max_open_connections =/c\max_open_connections = \"${HEIMDALL_MAX_OPEN_CONNECTIONS}\"" ${HEIMDALL_HOME}/config/config.toml \
+    && sed -i "/max_num_inbound_peers =/c\max_num_inbound_peers = \"${HEIMDALL_MAX_INBOUND_PEERS}\"" ${HEIMDALL_HOME}/config/config.toml \
+    && sed -i "/max_num_outbound_peers =/c\max_num_outbound_peers = \"${HEIMDALL_MAX_OUTBOUND_PEERS}\"" ${HEIMDALL_HOME}/config/config.toml
 
 CMD ./polygon.sh
