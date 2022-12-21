@@ -4,9 +4,11 @@ ENV BRANCH master
 ENV DATA_DIR=/data
 ENV CHAIN=main
 ENV RPC_USER=root
-ENV RPC_PASS=pass
-ENV RPC_PORT=8332
-ENV EXTRAFLAGS=""
+ENV RPC_PASS=root
+ENV RPC_PORT=3889
+ENV RPC_BIND=0.0.0.0
+ENV RPC_ALLOW_IP=0.0.0.0/0
+
 
 RUN set -ex \
     && apt-get update \
@@ -37,11 +39,15 @@ RUN mkdir $DATA_DIR \
     VOLUME ${DATA_DIR}
 
 EXPOSE 3888 3889 13888 13889
+
 CMD ["qtumd -chain=${CHAIN} \
     -datadir=${DATA_DIR} \
     -rpcuser=${RPC_USER} \
     -rpcpassword=${RPC_PASS} \
     -rpcport=${RPC_PORT} \
+    -rpcbind=${RPC_BIND} \
+    -rpcallowip=${RPC_ALLOW_IP} \
     ${EXTRAFLAGS}"]
+
 
 #More qtum params: https://github.com/qtumproject/qtum/blob/1a926b980f03e97322c7dd787835bec1730f35d2/contrib/debian/examples/qtum.conf
