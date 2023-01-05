@@ -69,12 +69,4 @@ ADD polygon.sh .
 
 RUN chmod +x ./polygon.sh
 
-RUN sed -i "/seeds =/c\seeds = \"${HEIMDALL_SEEDS}\"" ${HEIMDALL_HOME}/config/config.toml \
-    && sed -i "/26657/c\laddr = \"${HEIMDALL_BRIDGE}\"" ${HEIMDALL_HOME}/config/config.toml \
-    && sed -i "/bor_rpc_url/c\bor_rpc_url = \"${HEIMDALL_BOR_RPC_URL}\"" ${HEIMDALL_HOME}/config/config.toml \
-    && sed -i "/eth_rpc_url/c\eth_rpc_url = \"${HEIMDALL_ETH_RPC_URL}\"" ${HEIMDALL_HOME}/config/config.toml \
-    && sed -i "/^max_open_connections =/c\max_open_connections = \"${HEIMDALL_MAX_OPEN_CONNECTIONS}\"" ${HEIMDALL_HOME}/config/config.toml \
-    && sed -i "/max_num_inbound_peers =/c\max_num_inbound_peers = \"${HEIMDALL_MAX_INBOUND_PEERS}\"" ${HEIMDALL_HOME}/config/config.toml \
-    && sed -i "/max_num_outbound_peers =/c\max_num_outbound_peers = \"${HEIMDALL_MAX_OUTBOUND_PEERS}\"" ${HEIMDALL_HOME}/config/config.toml
-
 CMD ./polygon.sh
