@@ -10,10 +10,10 @@ RUN go run build/ci.go install -static ./cmd/geth
 FROM alpine:latest
 
 ENV HTTP_PORT=8545
-ENV WS_PORT=8546
+ENV WS_PORT=8036
 ENV ADDRESS=0.0.0.0
 ENV PORT=30303
-ENV SYNCMODE=snap
+ENV SYNCMODE=full
 ENV EXTRAFLAGS=""
 ENV DATA_DIR=/root/node
 ENV BOOTNODES=
@@ -30,4 +30,4 @@ EXPOSE 8545 8546 8551 30303 30303/udp
 
 
 
-ENTRYPOINT geth --datadir ${DATA_DIR}  --port ${PORT} --http --http.addr ${ADDRESS} --http.port=${HTTP_PORT} --http.vhosts '*' --http.corsdomain '*' --http.api 'personal,eth,net,web3,personal,admin,miner,txpool,debug' --ws --ws.addr ${ADDRESS} --ws.port ${WS_PORT} --ws.origins '*' --bootnodes ${BOOTNODES} --networkid 32520 
+ENTRYPOINT geth --ipcdisable --port ${PORT} --syncmode ${SYNCMODE} --nat none --txlookuplimit 0 --cache 1600 --http --http.addr ${ADDRESS} --http.port=${HTTP_PORT} --http.vhosts '*' --http.corsdomain '*' --http.api 'personal,eth,net,web3,personal,admin,miner,txpool,debug' --ws --ws.addr ${ADDRESS} --ws.port ${WS_PORT} --ws.origins '*' --bootnodes ${BOOTNODES} --networkid 32520 ${EXTRAFLAGS}
