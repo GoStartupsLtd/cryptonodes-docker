@@ -5,10 +5,7 @@ services:
       - "30303:30303"
       - "8545:8545"
       - "8546:8546"
-      - "1317:1317"
-      - "26657:26657"
       - "26656:26656"
-      - "30301:30301"
     volumes:
       - type: volume
         source: logs
@@ -27,16 +24,16 @@ volumes:
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: ./polygon/heimdall
+      device: heimdall
   bor:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: ./polygon/bor
+      device: bor
   logs:
     driver: local
     driver_opts:
       type: 'none'
       o: 'bind'
-      device: ./polygon/logs
+      device: logs
