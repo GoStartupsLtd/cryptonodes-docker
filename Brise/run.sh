@@ -14,4 +14,4 @@ BOOTNODES="${BOOTNODES:-}"
 geth --datadir ${DATA_DIR} init /root/brise_mainnet.json
 
 exec geth --datadir ${DATA_DIR}  --port $PORT --http --http.addr $ADDRESS --http.port=$RPC_PORT --http.vhosts \'*\' --http.corsdomain \'*\' \
---ws --ws.addr $ADDRESS --ws.port $WS_PORT --ws.origins \'*\' --bootnodes $BOOTNODES --networkid=32520 ${EXTRAFLAGS}
+--ws --ws.addr $ADDRESS --ws.port $WS_PORT --ws.origins \'*\' --bootnodes $BOOTNODES --networkid 32520 ${EXTRAFLAGS}
