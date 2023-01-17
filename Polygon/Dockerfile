@@ -15,7 +15,7 @@ ENV BOR_STATIC_FILE https://raw.githubusercontent.com/maticnetwork/launch/master
 ENV BOR_MODE "full"
 ENV BOR_BOOTNODES "enode://0cb82b395094ee4a2915e9714894627de9ed8498fb881cec6db7c65e8b9a5bd7f2f25cc84e71e89d0947e51c76e85d0847de848c7782b13c0255247a6758178c@44.232.55.71:30303,enode://88116f4295f5a31538ae409e4d44ad40d22e44ee9342869e7d68bdec55b0f83c1530355ce8b41fbec0928a7d75a5745d528450d30aec92066ab6ba1ee351d710@159.203.9.164:30303"
 
-WORKDIR /root/
+WORKDIR /app/
 
 # Bor/heimdall peer network port
 EXPOSE 30303
@@ -33,37 +33,49 @@ RUN git clone https://github.com/maticnetwork/bor/
 RUN git clone https://github.com/maticnetwork/heimdall 
 
 RUN cd bor \
-    && make bor
+    && make bor \
+    && ln -nfs build/bin/bor /usr/bin/bor \
+    && ln -nfs build/bin/bootnode /usr/bin/bootnode
 
 RUN cd heimdall \
-    && git checkout mainnet-alchemy \
-    && make install
+    && git checkout v0.2.12 \
+    && make install 
 
-RUN mkdir /root/logs \
-    && touch /root/logs/heimdalld.log \
-    && touch /root/logs/rest-server.log \
-    && touch /root/logs/bridge.log \
-    && touch /root/logs/bor.log
+WORKDIR /root/node 
+RUN git clone https://github.com/maticnetwork/launch
+RUN cp -rf launch/mainnet-v1/sentry/sentry/* ./
+
+RUN ls
+RUN cd heimdall && bash setup.sh
+RUN cd bor && bash setup.sh
+
+RUN wget https://raw.githubusercontent.com/maticnetwork/launch/master/mainnet-v1/service.sh
+RUN mkdir -p /etc/matic && chmod -R 777 /etc/matic/ && touch /etc/matic/metadata
+RUN bash service.sh && cp *.service /etc/systemd/system/
 
 
-RUN heimdalld init --home /root/.heimdalld --chain-id ${HEIMDALL_CHAIN_ID}  
+
+# RUN mkdir /root/logs \
+#     && touch /root/logs/heimdalld.log \
+#     && touch /root/logs/rest-server.log \
+#     && touch /root/logs/bridge.log \
+#     && touch /root/logs/bor.log
+
+
+# RUN heimdalld init --chain-id ${HEIMDALL_CHAIN_ID}  
 # setup config files
-RUN wget -q -O /root/.heimdalld/config/genesis.json ${HEIMDALL_GENESIS_URL} -P /root/.heimdalld/config
+# RUN wget -q -O /app/.heimdalld/config/genesis.json ${HEIMDALL_GENESIS_URL} -P /app/.heimdalld/config
 
-RUN sed -i "/26657/c\laddr = \"${HEIMDALL_BRIDGE}\"" /root/.heimdalld/config/config.toml
+# RUN sed -i "/26657/c\laddr = \"${HEIMDALL_BRIDGE}\"" /root/.heimdalld/config/config.toml
 
-RUN cd /root \
-    && echo 'sed -i "/seeds =/c\seeds = \"${HEIMDALL_SEEDS}\"" /root/.heimdalld/config/config.toml \
-    && sed -i "/26657/c\laddr = \"${HEIMDALL_BRIDGE}\"" /root/.heimdalld/config/config.toml \
-    && sed -i "/bor_rpc_url/c\bor_rpc_url = \"${HEIMDALL_BOR_RPC_URL}\"" /root/.heimdalld/config/config.toml \
-    && sed -i "/eth_rpc_url/c\eth_rpc_url = \"${HEIMDALL_ETH_RPC_URL}\"" /root/.heimdalld/config/config.toml' >> heimdall-configuration && chmod +x ./heimdall-configuration
+# RUN cd /root \
+#     && echo 'sed -i "/seeds =/c\seeds = \"${HEIMDALL_SEEDS}\"" /app/.heimdalld/config/config.toml \
+#     && sed -i "/26657/c\laddr = \"${HEIMDALL_BRIDGE}\"" /app/.heimdalld/config/config.toml \
+#     && sed -i "/bor_rpc_url/c\bor_rpc_url = \"${HEIMDALL_BOR_RPC_URL}\"" /app/.heimdalld/config/config.toml \
+#     && sed -i "/eth_rpc_url/c\eth_rpc_url = \"${HEIMDALL_ETH_RPC_URL}\"" /app/.heimdalld/config/config.toml' >> heimdall-configuration && chmod +x ./heimdall-configuration
 
-RUN echo "./heimdall-configuration \
-    \n  heimdalld start 2>&1 | tee /root/logs/heimdalld.log & \
-    \n  heimdalld rest-server 2>&1 | tee /root/logs/rest-server.log & \
-    \n  bridge start 2>&1 | tee /root/logs/bridge.log & \
-    \n  bor server 2>&1 | tee /root/logs/bor.log" > polygon.sh \
-    && chmod +x ./polygon.sh
+# RUN echo  > polygon.sh \
+#     && chmod +x ./polygon.sh
 
 
-CMD ./polygon.sh
+CMD heimdalld init && wget https://gist.githubusercontent.com/martin-key/c6f6e1647e51293b150b81fa2bfe749a/raw/545b1a30f06fd6c37eee8b14ea48802bab5fb5c4/heimdall-config.toml -O /root/.heimdalld/config/heimdall-config.toml && wget https://gist.githubusercontent.com/martin-key/457f85192928272e65287c8e03eaa11b/raw/bede4bbbc52c319230e1434b58276948fa16e8cb/config.toml -O /root/.heimdalld/config/config.toml && heimdalld start | bor server

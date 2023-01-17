@@ -1,19 +1,18 @@
-FROM golang:1.16-alpine as builder
+# FROM golang:1.19-alpine as builder
 
-ENV DEBIAN_FRONTEND=noninteractive
+# WORKDIR /home/
+# RUN apk add --no-cache make gcc musl-dev linux-headers git
 
-WORKDIR /home/
-RUN apk add --no-cache make gcc musl-dev linux-headers git
-
-RUN git clone https://github.com/ethereum/go-ethereum && \
-    cd go-ethereum && \
-    make geth 
+# RUN git clone https://github.com/ethereum/go-ethereum && \
+#     cd go-ethereum && \
+#     make geth 
 
 # Pull Geth into a second stage deploy alpine container
-FROM alpine:latest
+FROM debian:9
 
-RUN apk add --no-cache ca-certificates
-COPY --from=builder /home/go-ethereum/build/bin/geth /usr/local/bin/
+# RUN apk add --no-cache ca-certificates
+# COPY --from=builder /home/go-ethereum/build/bin/geth /usr/local/bin/
+
 
 ENV HTTP_PORT=8545
 ENV WS_PORT=8546
@@ -23,6 +22,14 @@ ENV SYNCMODE=snap
 ENV EXTRAFLAGS=""
 
 EXPOSE 8545 8546 30303 30303/udp
-ENTRYPOINT geth --ipcdisable --syncmode ${SYNCMODE} --nat none --txlookuplimit 0 --cache 16000 --port ${PORT} \
---http --http.addr ${ADDRESS} --http.port=${HTTP_PORT} --http.vhosts '*' --http.corsdomain '*' \
---ws --ws.addr ${ADDRESS} --ws.port ${WS_PORT} --ws.origins '*' ${EXTRAFLAGS}
+
+COPY . .
+RUN apt update && apt install curl gpg wget -y
+RUN wget https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-1.10.26-e5eb32ac.tar.gz
+RUN tar xzf geth-linux-amd64-1.10.26-e5eb32ac.tar.gz
+RUN mv ./geth-linux-amd64-1.10.26-e5eb32ac/geth geth
+RUN chmod +x geth
+RUN curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh && chmod +x prysm.sh
+
+ENTRYPOINT sh run.sh
+
