@@ -4,9 +4,15 @@ WORKDIR /home
 
 RUN apt update && apt install wget python3 curl git make -y
 
-COPY ./install.sh ./install.sh
+RUN export ETHEREUM_VERSION=$(curl -s https://api.github.com/repos/ethereum/go-ethereum/releases/latest | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'])") && \
+    echo "Installing version: $ETHEREUM_VERSION" && \
+    git clone https://github.com/ethereum/go-ethereum && \
+    cd go-ethereum && \
+    git checkout ${ETHEREUM_VERSION} && \
+    make geth && \
+    ln -s /home/go-ethereum/build/bin/geth /usr/local/bin
 
-RUN export ETHEREUM_VERSION=$(curl -s https://api.github.com/repos/ethereum/go-ethereum/releases/latest | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'])") && sh install.sh
+RUN curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh && chmod +x prysm.sh
 
 FROM debian:9
 
