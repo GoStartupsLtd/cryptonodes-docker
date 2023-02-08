@@ -22,13 +22,6 @@ WORKDIR /home
 
 RUN apt update && apt upgrade -y && apt install -y curl
 
-ENV HTTP_PORT=8545
-ENV WS_PORT=8546
-ENV ADDRESS=127.0.0.1
-ENV PORT=30303
-ENV SYNCMODE=snap
-ENV EXTRAFLAGS=""
-
 EXPOSE 8545 8546 30303 30303/udp
 
 COPY --from=build /usr/local/bin/geth /usr/local/bin/

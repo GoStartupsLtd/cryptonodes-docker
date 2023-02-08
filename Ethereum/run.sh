@@ -3,7 +3,8 @@ HTTP_PORT="${HTTP_PORT:-8545}"
 WS_PORT="${WS_PORT:-8546}"
 PORT="${PORT:-30303}"
 SYNCMODE="${SYNCMODE:-snap}"
-EXTRAFLAGS="${EXTRAFLAGS}"
+EXTRAFLAGS="${EXTRAFLAGS:-}"
+ADDRESS="${ADDRESS:-127.0.0.1}"
 
 exec geth --syncmode ${SYNCMODE} --nat none --txlookuplimit 0 --cache 4096 --port ${PORT} \
 --http --http.addr 0.0.0.0 --http.port=${HTTP_PORT} --http.vhosts '*' --http.corsdomain '*' \
