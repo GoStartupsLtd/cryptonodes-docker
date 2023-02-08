@@ -4,7 +4,9 @@ WORKDIR /home
 
 RUN apt update && apt install wget python3 curl git make -y
 
-RUN export ETHEREUM_VERSION=$(curl -s https://api.github.com/repos/ethereum/go-ethereum/releases/latest | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'])") && \
+ENV ETHEREUM_LATEST_RELEASE=https://api.github.com/repos/ethereum/go-ethereum/releases/latest
+
+RUN export ETHEREUM_VERSION=$(curl -s ${ETHEREUM_LATEST_RELEASE} | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'])") && \
     echo "Installing version: $ETHEREUM_VERSION" && \
     git clone https://github.com/ethereum/go-ethereum && \
     cd go-ethereum && \
