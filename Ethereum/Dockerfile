@@ -2,7 +2,7 @@ FROM golang:1.19-buster AS build
 
 WORKDIR /home
 
-RUN apt update && apt install wget python3 curl git make -y
+RUN apt update && apt upgrade && apt install wget python3 curl git make -y
 
 ENV ETHEREUM_LATEST_RELEASE=https://api.github.com/repos/ethereum/go-ethereum/releases/latest
 
@@ -28,4 +28,4 @@ COPY --from=build /usr/local/bin/geth /usr/local/bin/
 COPY --from=build /home/prysm.sh ./prysm.sh
 COPY ./run.sh ./run.sh
 
-ENTRYPOINT sh run.sh
+ENTRYPOINT ./run.sh
