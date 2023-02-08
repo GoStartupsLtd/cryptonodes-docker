@@ -1,18 +1,18 @@
-# FROM golang:1.19-alpine as builder
+FROM golang:1.19-buster AS build
 
-# WORKDIR /home/
-# RUN apk add --no-cache make gcc musl-dev linux-headers git
+WORKDIR /home
 
-# RUN git clone https://github.com/ethereum/go-ethereum && \
-#     cd go-ethereum && \
-#     make geth 
+RUN apt update && apt install wget python3 curl git make -y
 
-# Pull Geth into a second stage deploy alpine container
+COPY ./install.sh ./install.sh
+
+RUN export ETHEREUM_VERSION=$(curl -s https://api.github.com/repos/ethereum/go-ethereum/releases/latest | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'])") && sh install.sh
+
 FROM debian:9
 
-# RUN apk add --no-cache ca-certificates
-# COPY --from=builder /home/go-ethereum/build/bin/geth /usr/local/bin/
+WORKDIR /home
 
+RUN apt update && apt upgrade -y && apt install -y curl
 
 ENV HTTP_PORT=8545
 ENV WS_PORT=8546
@@ -23,13 +23,8 @@ ENV EXTRAFLAGS=""
 
 EXPOSE 8545 8546 30303 30303/udp
 
-COPY . .
-RUN apt update && apt install curl gpg wget -y
-RUN wget https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-1.10.26-e5eb32ac.tar.gz
-RUN tar xzf geth-linux-amd64-1.10.26-e5eb32ac.tar.gz
-RUN mv ./geth-linux-amd64-1.10.26-e5eb32ac/geth geth
-RUN chmod +x geth
-RUN curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh && chmod +x prysm.sh
+COPY --from=build /usr/local/bin/geth /usr/local/bin/
+COPY --from=build /home/prysm.sh ./prysm.sh
+COPY ./run.sh ./run.sh
 
 ENTRYPOINT sh run.sh
-
