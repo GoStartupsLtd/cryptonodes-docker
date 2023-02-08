@@ -7,11 +7,11 @@ ENV RPC_ALLOW_IP=127.0.0.1
 ENV ZMQ_PORT=29000
 ENV ZMQ_ADDRESS=localhost
 ENV TESTNET=0
-ENV EXTRAFLAGS=''
+ENV EXTRAFLAGS=""
 ENV DEBIAN_FRONTEND=noninteractive
 ENV RPC_BIND=0.0.0.0
 
-RUN apt update && apt install curl gpg wget python3 -y
+RUN apt update && apt upgrade -y && apt install curl gpg wget python3 -y
 
 COPY ./install.sh ./install.sh
 RUN chmod +x ./install.sh
