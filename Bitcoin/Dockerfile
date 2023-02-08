@@ -9,26 +9,32 @@ ENV ZMQ_ADDRESS=localhost
 ENV TESTNET=0
 ENV EXTRAFLAGS=""
 ENV DEBIAN_FRONTEND=noninteractive
+ENV RPC_BIND=0.0.0.0
 
-RUN apt update && apt upgrade -y && apt install -y wget
-RUN wget https://bitcoincore.org/bin/bitcoin-core-23.0/bitcoin-23.0-x86_64-linux-gnu.tar.gz
-RUN tar xzf bitcoin-23.0-x86_64-linux-gnu.tar.gz
-RUN install -m 0755 -o root -g root -t /usr/local/bin bitcoin-23.0/bin/*
+RUN apt update && apt upgrade -y && apt install curl gpg wget python3 -y
+
+ENV BITCOIN_LATEST_VERSION=https://api.github.com/repos/bitcoin/bitcoin/releases/latest
+
+RUN export BITCOIN_VERSION=$(curl -s ${BITCOIN_LATEST_VERSION} | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'].replace('v', ''))") && \
+    echo "Installing version: $BITCOIN_VERSION" && \ 
+    wget "https://bitcoincore.org/bin/bitcoin-core-$BITCOIN_VERSION/bitcoin-$BITCOIN_VERSION-x86_64-linux-gnu.tar.gz" && \
+    tar xzf bitcoin-$BITCOIN_VERSION-x86_64-linux-gnu.tar.gz && \
+    install -m 0755 -o root -g root -t /usr/local/bin bitcoin-$BITCOIN_VERSION/bin/*
 
 EXPOSE ${RPC_PORT}
 EXPOSE ${ZMQ_PORT}
 
-ENTRYPOINT bitcoind -rpcuser="$RPC_USER" \
-    -rpcpassword="$RPC_PASS" \
-    -rpcport="$RPC_PORT" \
+ENTRYPOINT bitcoind -rpcuser="${RPC_USER}" \
+    -rpcpassword="${RPC_PASS}" \
+    -rpcport="${RPC_PORT}" \
     -rpcallowip="${RPC_ALLOW_IP}" \
-    -rpcbind=0.0.0.0 \
+    -rpcbind="${RPC_BIND}" \
     -listen \
     -server \
-    -zmqpubhashblock="tcp://${ZMQADDRESS}:${ZMQ_PORT}" \
-    -zmqpubhashtx="tcp://${ZMQADDRESS}:${ZMQ_PORT}" \
-    -zmqpubrawblock="tcp://${ZMQADDRESS}:${ZMQ_PORT}" \
-    -zmqpubrawtx="tcp://${ZMQADDRESS}:${ZMQ_PORT}" \
-    -zmqpubsequence="tcp://${ZMQADDRESS}:${ZMQ_PORT}" \
+    -zmqpubhashblock="tcp://${ZMQ_ADDRESS}:${ZMQ_PORT}" \
+    -zmqpubhashtx="tcp://${ZMQ_ADDRESS}:${ZMQ_PORT}" \
+    -zmqpubrawblock="tcp://${ZMQ_ADDRESS}:${ZMQ_PORT}" \
+    -zmqpubrawtx="tcp://${ZMQ_ADDRESS}:${ZMQ_PORT}" \
+    -zmqpubsequence="tcp://${ZMQ_ADDRESS}:${ZMQ_PORT}" \
     -testnet=${TESTNET} \
     ${EXTRAFLAGS}
