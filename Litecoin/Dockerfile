@@ -1,4 +1,4 @@
-FROM golang:1.19-buster AS build
+FROM golang:1.19-buster
 
 WORKDIR /home
 
@@ -20,6 +20,6 @@ RUN export LITECOIN_VERSION=$(curl -s ${LITECOIN_LATEST_RELEASE} | python3 -c "i
 
 COPY ./run.sh ./run.sh
 
-EXPOSE 22557
+EXPOSE 22556
 
 ENTRYPOINT ./run.sh
