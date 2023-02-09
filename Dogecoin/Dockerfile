@@ -16,7 +16,7 @@ RUN export DOGECOIN_VERSION=$(curl -s ${DOGECOIN_LATEST_RELEASE} | python3 -c "i
     make && \
     make install
 
-EXPOSE 22555
+EXPOSE 22554
 
 COPY ./run.sh ./run.sh
 
