@@ -15,13 +15,6 @@ RUN unzip mainnet.zip
 RUN chmod +x geth_linux
 # Pull Geth into a second stage deploy alpine container
 
-ENV HTTP_PORT=18545
-ENV WS_PORT=18546
-ENV ADDRESS=0.0.0.0
-ENV PORT=30311
-ENV SYNCMODE=snap
-ENV EXTRAFLAGS=""
-
 EXPOSE 18545 18546 30311 30311/udp
 
 COPY config.toml ./config.toml
