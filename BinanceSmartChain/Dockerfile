@@ -2,15 +2,15 @@ FROM debian:9
 
 WORKDIR /home/bsc
 
-ENV DEBIAN_FRONTEND=noninteractive
+ENV BINANCE_LATEST_RELEASE=https://api.github.com/repos/bnb-chain/bsc/releases/latest
 
 RUN apt update -y
 RUN apt install -y wget curl unzip
 
 # https://docs.bnbchain.org/docs/validator/fullnode
 
-RUN wget $(curl -s https://api.github.com/repos/bnb-chain/bsc/releases/latest |grep browser_ |grep geth_linux |cut -d\" -f4)
-RUN wget $(curl -s https://api.github.com/repos/bnb-chain/bsc/releases/latest |grep browser_ |grep mainnet |cut -d\" -f4)
+RUN wget $(curl -s ${BINANCE_LATEST_RELEASE} |grep browser_ |grep geth_linux |cut -d\" -f4)
+RUN wget $(curl -s ${BINANCE_LATEST_RELEASE} |grep browser_ |grep mainnet |cut -d\" -f4)
 RUN unzip mainnet.zip
 RUN chmod +x geth_linux
 # Pull Geth into a second stage deploy alpine container
