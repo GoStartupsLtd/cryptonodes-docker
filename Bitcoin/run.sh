@@ -13,7 +13,7 @@ RPC_BIND="${RPC_BIND:-0.0.0.0}"
 
 exec bitcoind -rpcuser="$RPC_USER" \
     -rpcpassword="$RPC_PASS" \
-    -rpcport="$RPC_PORT" \
+    -port="$RPC_PORT" \
     -rpcallowip="$RPC_ALLOW_IP" \
     -rpcbind="$RPC_BIND" \
     -listen \
