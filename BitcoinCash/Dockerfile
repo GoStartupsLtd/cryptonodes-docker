@@ -1,4 +1,4 @@
-FROM debian:10 AS build
+FROM debian:10
 
 WORKDIR /home
 
@@ -20,6 +20,6 @@ RUN export BITCOIN_VERSION=$(curl -s ${BITCOIN_CASH_LATEST_VERSION} | python3 -c
 
 COPY ./run.sh ./run.sh
 
-EXPOSE 8332 29000
+EXPOSE 8332
 
 ENTRYPOINT ./run.sh
