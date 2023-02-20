@@ -1,4 +1,4 @@
-FROM debian:10
+FROM debian:10 AS build
 
 WORKDIR /home
 
@@ -18,8 +18,15 @@ RUN export BITCOIN_VERSION=$(curl -s ${BITCOIN_CASH_LATEST_VERSION} | python3 -c
     ninja && \
     ln -s /home/bitcoin-cash-node/build/src/bitcoind /usr/local/bin
 
+FROM debian:10
+
+WORKDIR /home
+
+RUN apt update && apt upgrade -y && apt install -y curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common wget
+
+COPY --from=build /usr/local/bin/bitcoind /usr/local/bin
 COPY ./run.sh ./run.sh
 
-EXPOSE 8332
+EXPOSE 8334 29000
 
 ENTRYPOINT ./run.sh
