@@ -2,7 +2,7 @@ FROM golang:1.19-buster AS build
 
 WORKDIR /home
 
-RUN apt update && apt upgrade && apt install wget python3 curl git make -y
+RUN apt update && apt upgrade -y && apt install wget python3 curl git make -y
 
 ENV ETHEREUM_LATEST_RELEASE=https://api.github.com/repos/ethereum/go-ethereum/releases/latest
 
@@ -20,7 +20,7 @@ FROM debian:9
 
 WORKDIR /home
 
-RUN apt update && apt upgrade -y && apt install -y curl
+RUN apt update && apt upgrade -y && apt install -y curl gpg
 
 EXPOSE 8545 8546 30303 30303/udp
 
