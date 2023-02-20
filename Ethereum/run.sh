@@ -6,6 +6,10 @@ PORT="${PORT:-30303}"
 SYNCMODE="${SYNCMODE:-snap}"
 EXTRAFLAGS="${EXTRAFLAGS}"
 
+./prysm.sh beacon-chain \
+    --execution-endpoint=/root/.ethereum/geth.ipc \
+    --accept-terms-of-use &
+
 exec geth --syncmode ${SYNCMODE} \
     --nat none \
     --txlookuplimit 0 \
@@ -20,5 +24,4 @@ exec geth --syncmode ${SYNCMODE} \
     --ws.addr ${ADDRESS} \
     --ws.port ${WS_PORT} \
     --ws.origins '*' \
-    ${EXTRAFLAGS} & ./prysm.sh beacon-chain --execution-endpoint=/root/.ethereum/geth.ipc --accept-terms-of-use &
- 
+    ${EXTRAFLAGS}

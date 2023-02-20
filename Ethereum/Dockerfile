@@ -2,7 +2,7 @@ FROM golang:1.19-buster AS build
 
 WORKDIR /home
 
-RUN apt update && apt upgrade -y && apt install wget python3 curl git make -y
+RUN apt update && apt install wget python3 curl git make -y
 
 ENV ETHEREUM_LATEST_RELEASE=https://api.github.com/repos/ethereum/go-ethereum/releases/latest
 
@@ -16,7 +16,7 @@ RUN export ETHEREUM_VERSION=$(curl -s ${ETHEREUM_LATEST_RELEASE} | python3 -c "i
 
 RUN curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh && chmod +x prysm.sh
 
-FROM debian:9
+FROM debian:10
 
 WORKDIR /home
 
