@@ -1,8 +1,8 @@
-FROM debian:10
+FROM debian:10 AS build
 
 WORKDIR /home
 
-RUN apt update && apt upgrade -y && apt install -y libb2-dev curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common wget  libtool autoconf autotools-dev pkg-config bsdmainutils
+RUN apt update && apt upgrade -y && apt install -y libb2-dev curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common libtool autoconf autotools-dev pkg-config bsdmainutils
 
 ENV BITCOIN_GOLD_LATEST_VERSION=https://api.github.com/repos/BTCGPU/BTCGPU/releases/latest
 
@@ -14,11 +14,17 @@ RUN export BITCOIN_GOLD_VERSION=$(curl -s ${BITCOIN_GOLD_LATEST_VERSION} | pytho
     ./autogen.sh && \
     ./configure --disable-wallet --without-gui && \
     make && \
-    make install && \
-    ln -s /home/BTCGPU/src/bitcoind /usr/local/bin
+    make install
+
+FROM debian:10
+
+WORKDIR /home
+
+RUN apt update && apt upgrade -y && apt install -y libb2-dev curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common libtool autoconf autotools-dev pkg-config bsdmainutils
 
 COPY ./run.sh ./run.sh
+COPY --from=build /usr/local/bin/bgoldd /usr/local/bin
 
-EXPOSE 8336
+EXPOSE 8332 29000
 
 ENTRYPOINT ./run.sh
