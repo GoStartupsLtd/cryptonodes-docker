@@ -12,7 +12,6 @@ DEBIAN_FRONTEND="${DEBIAN_FRONTEND:-noninteractive}"
 exec dogecoind -port=$RPC_PORT \
     -rpcuser=$RPC_USER \
     -rpcpassword=$RPC_PASS \
-    -rpcport=$RPC_PORT \
     -rpcallowip=$RPC_ALLOW_IP \
     -rpcbind=$RPC_BIND \
     -listen \
