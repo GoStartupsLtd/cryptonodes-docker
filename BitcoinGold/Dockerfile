@@ -25,6 +25,6 @@ RUN apt update && apt upgrade -y && apt install -y libb2-dev curl gpg wget libss
 COPY ./run.sh ./run.sh
 COPY --from=build /usr/local/bin/bgoldd /usr/local/bin
 
-EXPOSE 8333 29000
+EXPOSE 8333
 
 ENTRYPOINT ./run.sh
