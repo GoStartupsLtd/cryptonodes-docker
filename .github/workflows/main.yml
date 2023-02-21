@@ -19,6 +19,8 @@ jobs:
         include:
           - coin: "bitcoin"
             context: "./Bitcoin"
+          - coin: "binancesmartchain"
+            context: "./BinanceSmartChain"
           - coin: "litecoin"
             context: "./Litecoin"
           - coin: "dogecoin"
