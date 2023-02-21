@@ -16,18 +16,11 @@ RUN export ETHEREUM_VERSION=$(curl -s ${ETHEREUM_LATEST_RELEASE} | python3 -c "i
 
 RUN curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh && chmod +x prysm.sh
 
-FROM debian:9
+FROM debian:10
 
 WORKDIR /home
 
-RUN apt update && apt upgrade -y && apt install -y curl
-
-ENV HTTP_PORT=8545
-ENV WS_PORT=8546
-ENV ADDRESS=127.0.0.1
-ENV PORT=30303
-ENV SYNCMODE=snap
-ENV EXTRAFLAGS=""
+RUN apt update && apt upgrade -y && apt install -y curl gpg
 
 EXPOSE 8545 8546 30303 30303/udp
 
@@ -35,4 +28,4 @@ COPY --from=build /usr/local/bin/geth /usr/local/bin/
 COPY --from=build /home/prysm.sh ./prysm.sh
 COPY ./run.sh ./run.sh
 
-ENTRYPOINT sh run.sh
+ENTRYPOINT ./run.sh
