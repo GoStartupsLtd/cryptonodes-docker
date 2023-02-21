@@ -1,26 +1,30 @@
-FROM debian:9
+FROM debian:10 AS build
 
-ENV DEBIAN_FRONTEND=noninteractive
-ENV RPC_USER=user
-ENV RPC_PASS=pass
-ENV RPC_PORT=8332
-ENV RPC_ALLOW_IP=127.0.0.1
-ENV TESTNET=0
-ENV EXTRAFLAGS=""
+WORKDIR /home
 
-RUN apt update && apt upgrade && apt install -y wget
-RUN wget https://github.com/BTCGPU/BTCGPU/releases/download/v0.17.3/bitcoin-gold-0.17.3-x86_64-linux-gnu.tar.gz
-RUN tar xzf bitcoin-gold-0.17.3-x86_64-linux-gnu.tar.gz
-RUN install -m 0755 -o root -g root -t /usr/local/bin bitcoin-gold-0.17.3/bin/*
+RUN apt update && apt upgrade -y && apt install -y libb2-dev curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common libtool autoconf autotools-dev pkg-config bsdmainutils
 
-EXPOSE ${RPC_PORT}
+ENV BITCOIN_GOLD_LATEST_VERSION=https://api.github.com/repos/BTCGPU/BTCGPU/releases/latest
 
-ENTRYPOINT bgoldd -rpcuser="$RPC_USER" \
-    -rpcpassword="$RPC_PASS" \
-    -rpcport="$RPC_PORT" \
-    -rpcallowip="${RPC_ALLOW_IP}" \
-    -rpcbind=0.0.0.0 \
-    -listen \
-    -server \
-    -testnet=${TESTNET} \
-    ${EXTRAFLAGS}
+RUN export BITCOIN_GOLD_VERSION=$(curl -s ${BITCOIN_GOLD_LATEST_VERSION} | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'].replace('v', ''))") && \
+    echo "Installing version: $BITCOIN_GOLD_VERSION" && \
+    git clone https://github.com/BTCGPU/BTCGPU && \
+    cd BTCGPU && \
+    git checkout v${BITCOIN_GOLD_VERSION} && \
+    ./autogen.sh && \
+    ./configure --disable-wallet --without-gui && \
+    make && \
+    make install
+
+FROM debian:10
+
+WORKDIR /home
+
+RUN apt update && apt upgrade -y && apt install -y libb2-dev curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common libtool autoconf autotools-dev pkg-config bsdmainutils
+
+COPY ./run.sh ./run.sh
+COPY --from=build /usr/local/bin/bgoldd /usr/local/bin
+
+EXPOSE 8333
+
+ENTRYPOINT ./run.sh
