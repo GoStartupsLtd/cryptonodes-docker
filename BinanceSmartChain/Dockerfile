@@ -1,4 +1,4 @@
-FROM debian:9 AS build
+FROM debian:10 AS build
 
 WORKDIR /home
 
@@ -14,7 +14,7 @@ RUN unzip mainnet.zip && \
     chmod +x geth_linux && \
     ln -s /home/geth_linux /usr/local/bin
 
-FROM debian:9
+FROM debian:10
 
 WORKDIR /home
 
