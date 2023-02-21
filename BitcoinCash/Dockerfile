@@ -1,29 +1,32 @@
-FROM debian:9
+FROM debian:10 AS build
 
-ENV RPC_USER=user
-ENV RPC_PASS=pass
-ENV RPC_PORT=8355
-ENV RPC_ALLOW_IP=127.0.0.1
-ENV ZMQ_PORT=29001
-ENV ZMQ_ADDRESS=localhost
-ENV TESTNET=0
-ENV EXTRAFLAGS=""
-ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /home
 
-RUN apt update && apt upgrade && apt install -y wget
-RUN wget https://github.com/bitcoin-cash-node/bitcoin-cash-node/releases/download/v24.0.0/bitcoin-cash-node-24.0.0-x86_64-linux-gnu.tar.gz
-RUN tar xzf bitcoin-cash-node-24.0.0-x86_64-linux-gnu.tar.gz
-RUN install -m 0755 -o root -g root -t /usr/local/bin bitcoin-cash-node-24.0.0/bin/*
+RUN apt update && apt upgrade -y && apt install -y curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common wget
 
-EXPOSE ${RPC_PORT}
-EXPOSE ${ZMQ_PORT}
 
-ENTRYPOINT bitcoind -rpcuser="$RPC_USER" \
-    -rpcpassword="$RPC_PASS" \
-    -rpcport="$RPC_PORT" \
-    -rpcallowip="${RPC_ALLOW_IP}" \
-    -rpcbind=0.0.0.0 \
-    -listen \
-    -server \
-    -testnet=${TESTNET} \
-    ${EXTRAFLAGS}
+ENV BITCOIN_CASH_LATEST_VERSION=https://api.github.com/repos/bitcoin-cash-node/bitcoin-cash-node/releases/latest
+
+RUN export BITCOIN_VERSION=$(curl -s ${BITCOIN_CASH_LATEST_VERSION} | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'].replace('v', ''))") && \
+    echo "Installing version: $BITCOIN_CASH_LATEST_VERSION" && \
+    git clone https://github.com/bitcoin-cash-node/bitcoin-cash-node && \
+    cd bitcoin-cash-node && \
+    git checkout v${BITCOIN_VERSION} && \
+    mkdir build && \
+    cd build && \
+    cmake -GNinja .. -DBUILD_BITCOIN_WALLET=OFF -DBUILD_BITCOIN_QT=OFF && \
+    ninja && \
+    ln -s /home/bitcoin-cash-node/build/src/bitcoind /usr/local/bin
+
+FROM debian:10
+
+WORKDIR /home
+
+RUN apt update && apt upgrade -y && apt install -y curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common wget
+
+COPY --from=build /usr/local/bin/bitcoind /usr/local/bin
+COPY ./run.sh ./run.sh
+
+EXPOSE 8334
+
+ENTRYPOINT ./run.sh
