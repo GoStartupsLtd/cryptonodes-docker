@@ -27,6 +27,6 @@ RUN apt update && apt upgrade -y && apt install -y curl gpg wget libssl-dev buil
 COPY --from=build /usr/local/bin/bitcoind /usr/local/bin
 COPY ./run.sh ./run.sh
 
-EXPOSE 8334 29000
+EXPOSE 8334
 
 ENTRYPOINT ./run.sh
