@@ -31,6 +31,8 @@ jobs:
             context: "./BitcoinGold"
           - coin: "bitcoincash"
             context: "./BitcoinCash"
+          - coin: "kucoin"
+            context: "./Kucoin"
     steps:
       -
         name: Checkout
