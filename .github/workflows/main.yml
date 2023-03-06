@@ -33,6 +33,8 @@ jobs:
             context: "./BitcoinCash"
           - coin: "okt"
             context: "./Okt"
+          - coin: "kucoin"
+            context: "./Kucoin"
     steps:
       -
         name: Checkout
