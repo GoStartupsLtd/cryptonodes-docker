@@ -3,21 +3,24 @@ FROM ubuntu:20.04 AS build
 ENV GO_VERSION=1.19.2
 ENV ROCKSDB_VERSION=v6.27.3
 ENV GO_PATH=/go
-ENV OKT_LATEST_VERSION=https://api.github.com/repos/okx/exchain/releases/latest
+ENV OKT_LATEST_RELEASE=https://api.github.com/repos/okx/exchain/releases/latest
 ENV DEBIAN_FRONTEND=noninteractive
+
+ENV EXCHAIN_NODE_VERSION=
 
 WORKDIR /home
 
-# At the current time of writing this Dockerfile, there are no nodes available on newer versions upward of 1.6.7.7, so we revert to that version.
-ENV LATEST_VERSION=v1.6.7.7
 
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y wget python3 curl bzip2 liblz4-dev zstd libzstd-dev bash zlib1g-dev git make g++ gcc cmake gnutls-bin clang libsnappy-dev libgflags-dev
 
-RUN if [ "$LATEST_VERSION" = "v1.6.7.7" ]; then \
-    OKT_VERSION=${LATEST_VERSION}; \
+
+
+
+RUN if [ -z "$EXCHAIN_NODE_VERSION" ]; then \
+    OKT_VERSION=v1.6.7.7; \
     else \
-    OKT_VERSION=$(curl -s ${OKT_LATEST_VERSION} | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'])"); \
+    OKT_VERSION=$(curl -s ${OKT_LATEST_RELEASE} | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'])"); \
     fi && \
     echo "Installing version: $OKT_VERSION" && \
     git clone https://github.com/okx/exchain.git && \
