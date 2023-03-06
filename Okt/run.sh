@@ -8,8 +8,12 @@ EXCHAIND_HOME="${EXCHAIND_HOME:-/home/exchaind}"
 CHAIN_ID="${CHAIN_ID:-exchain-66}"
 EXTRAFLAGS="${EXTRAFLAGS:-}"
 
-curl --create-dirs https://raw.githubusercontent.com/okx/mainnet/main/genesis.json -o ${EXCHAIND_HOME}/config/genesis.json && \
-    exec exchaind start \
+START_FROM_SNAPSHOT="${START_FROM_SNAPSHOT:-true}"
+
+if [ "${START_FROM_SNAPSHOT}" = "true" ]; then
+    wget https://okg-pub-hk.oss-cn-hongkong.aliyuncs.com/cdn/okc/snapshot/mainnet-s1-20230306-17837049-rocksdb.tar.gz && \
+    tar -zxvf mainnet-s1-20230306-17837049-rocksdb.tar.gz -C ${EXCHAIND_HOME} && \
+    exec ./exchaind start \
     --home ${EXCHAIND_HOME} \
     --rpc.laddr tcp://${ADDRESS}:${TENDERMINT_RPC_PORT} \
     --rest.laddr tcp://${ADDRESS}:${EVM_RPC_PORT} \
@@ -17,3 +21,14 @@ curl --create-dirs https://raw.githubusercontent.com/okx/mainnet/main/genesis.js
     --iavl-enable-async-commit=false \
     --fast-query=false \
     ${EXTRAFLAGS}
+else
+    curl --create-dirs https://raw.githubusercontent.com/okx/mainnet/main/genesis.json -o ${EXCHAIND_HOME}/config/genesis.json && \
+    exec ./exchaind start \
+    --home ${EXCHAIND_HOME} \
+    --rpc.laddr tcp://${ADDRESS}:${TENDERMINT_RPC_PORT} \
+    --rest.laddr tcp://${ADDRESS}:${EVM_RPC_PORT} \
+    --wsport=${WS_PORT} \
+    --iavl-enable-async-commit=false \
+    --fast-query=false \
+    ${EXTRAFLAGS}
+fi

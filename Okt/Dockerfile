@@ -9,13 +9,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /home
 
 # At the current time of writing this Dockerfile, there are no nodes available on newer versions upward of 1.6.7.7, so we revert to that version.
-ENV BEFORE_HARD_FORK=true
+ENV LATEST_VERSION=v1.6.7.7
 
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y wget python3 curl bzip2 liblz4-dev zstd libzstd-dev bash zlib1g-dev git make g++ gcc cmake gnutls-bin clang libsnappy-dev libgflags-dev
 
-RUN if [ "$BEFORE_HARD_FORK" = "true" ]; then \
-    OKT_VERSION=v1.6.7.7; \
+RUN if [ "$LATEST_VERSION" = "v1.6.7.7" ]; then \
+    OKT_VERSION=${LATEST_VERSION}; \
     else \
     OKT_VERSION=$(curl -s ${OKT_LATEST_VERSION} | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'])"); \
     fi && \
