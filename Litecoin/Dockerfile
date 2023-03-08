@@ -23,6 +23,8 @@ WORKDIR /home
 RUN apt update && apt upgrade -y && apt-get install -y --no-install-recommends wget build-essential libtool autotools-dev automake pkg-config bsdmainutils python3 libevent-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev clang cmake gdb curl git make libzmq3-dev libssl-dev libdb++-dev
 
 COPY ./run.sh ./run.sh
+RUN chmod 777 ./run.sh
+
 COPY --from=build /usr/local/bin/litecoind /usr/local/bin
 
 EXPOSE 22556

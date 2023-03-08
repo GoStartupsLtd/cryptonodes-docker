@@ -22,6 +22,7 @@ EXPOSE 18545 18546 30311 30311/udp
 
 COPY config.toml ./config.toml
 COPY ./run.sh ./run.sh
+RUN chmod 777 ./run.sh
 COPY --from=build /usr/local/bin/geth_linux /usr/local/bin
 COPY --from=build /home/genesis.json /home/genesis.json
 RUN mkdir ./init-dir && geth_linux --datadir ./init-dir init genesis.json && cp -rn ./init-dir /root/.ethereum
