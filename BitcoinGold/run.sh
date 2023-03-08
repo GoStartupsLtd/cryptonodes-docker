@@ -11,7 +11,7 @@ DEBIAN_FRONTEND="${DEBIAN_FRONTEND:-noninteractive}"
 RPC_BIND="${RPC_BIND:-0.0.0.0}"
 DATA_DIR="${DATA_DIR:-/home/bgoldd}"
 
-mkdir -p ${DATA_DIR} &&
+mkdir -p ${DATA_DIR} && 
     exec bgoldd -rpcport=$RPC_PORT \
     -datadir=$DATA_DIR \
     -rpcallowip=$RPC_ALLOW_IP \
@@ -19,7 +19,6 @@ mkdir -p ${DATA_DIR} &&
     -rpcuser=$RPC_USER \
     -rpcpassword=$RPC_PASS \
     -rest \
-    -listen \
     -server \
     -testnet=$TESTNET \
     $EXTRAFLAGS
