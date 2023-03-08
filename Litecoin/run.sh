@@ -1,14 +1,16 @@
 #!/bin/bash
 
+DATA_DIR="${DATA_DIR-/home/litecoind}"
+
 RPC_USER="${RPC_USER:-user}"
 RPC_PASS="${RPC_PASS:-pass}"
 RPC_PORT="${RPC_PORT:-22556}"
 RPC_ALLOW_IP="${RPC_ALLOW_IP:-0.0.0.0/0}"
-TESTNET="${RPC_TESTNET:-0}"
 RPC_BIND="${RPC_BIND:-0.0.0.0}"
-EXTRAFLAGS="${EXTRAFLAGS:-}"
+
+TESTNET="${TESTNET:-0}"
 DEBIAN_FRONTEND="${DEBIAN_FRONTEND:-noninteractive}"
-EXTRAFLAGS="${EXTRAFLAGS:-""}"
+EXTRAFLAGS="${EXTRAFLAGS:-}"
 
 exec litecoind -rpcport=$RPC_PORT \
     -datadir=$DATA_DIR \
@@ -17,7 +19,6 @@ exec litecoind -rpcport=$RPC_PORT \
     -rpcuser=$RPC_USER \
     -rpcpassword=$RPC_PASS \
     -rest \
-    -listen \
     -server \
     -testnet=$TESTNET \
     $EXTRAFLAGS
