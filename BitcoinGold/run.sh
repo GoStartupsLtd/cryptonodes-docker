@@ -2,7 +2,6 @@
 
 DATA_DIR="${DATA_DIR:-/home/bgoldd}"
 
-
 RPC_USER="${RPC_USER:-user}"
 RPC_PASS="${RPC_PASS:-pass}"
 RPC_PORT="${RPC_PORT:-8336}"
