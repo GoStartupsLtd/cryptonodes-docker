@@ -14,7 +14,7 @@ FROM debian:9
 
 COPY --from=build /usr/local/bin/bitcoind /usr/local/bin/
 COPY ./run.sh ./run.sh
-
+RUN chmod 777 ./run.sh
 EXPOSE 8332 29000
 
 ENTRYPOINT ./run.sh

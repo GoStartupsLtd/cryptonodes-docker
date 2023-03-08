@@ -38,6 +38,8 @@ WORKDIR /home
 EXPOSE 8549 8550 8551
 
 COPY ./run.sh ./run.sh
+RUN chmod 777 ./run.sh
+
 COPY --from=build /usr /usr
 COPY --from=build root/go/bin/exchaind /usr/local/bin/
 COPY --from=build /lib/ /lib/

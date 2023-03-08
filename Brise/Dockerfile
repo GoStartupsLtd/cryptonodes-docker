@@ -12,6 +12,8 @@ FROM alpine:latest
 WORKDIR /root/
 
 COPY run.sh run.sh
+RUN chmod 777 ./run.sh
+
 COPY --from=BUILDER /geth/build/bin/geth /usr/local/bin/
 
 RUN apk add --no-cache bash \

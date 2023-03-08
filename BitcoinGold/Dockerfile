@@ -23,6 +23,8 @@ WORKDIR /home
 RUN apt update && apt upgrade -y && apt install -y libb2-dev curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common libtool autoconf autotools-dev pkg-config bsdmainutils
 
 COPY ./run.sh ./run.sh
+RUN chmod 777 ./run.sh
+
 COPY --from=build /usr/local/bin/bgoldd /usr/local/bin
 
 EXPOSE 8333

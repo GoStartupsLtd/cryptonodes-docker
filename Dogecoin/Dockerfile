@@ -25,5 +25,7 @@ EXPOSE 22554
 
 COPY --from=build /usr/local/bin/dogecoind /usr/local/bin
 COPY ./run.sh ./run.sh
+RUN chmod 777 ./run.sh
+
 
 ENTRYPOINT ./run.sh
