@@ -1,20 +1,24 @@
 #!/bin/bash
+DATA_DIR="${DATA_DIR:-/home/bitcoincash}"
 
 RPC_USER="${RPC_USER:-user}"
 RPC_PASS="${RPC_PASS:-pass}"
 RPC_PORT="${RPC_PORT:-8334}"
-RPC_ALLOW_IP="${RPC_ALLOW_IP:-127.0.0.1}"
-TESTNET="${TESTNET:-0}"
-EXTRAFLAGS="${EXTRAFLAGS:-""}"
-DEBIAN_FRONTEND="${DEBIAN_FRONTEND:-noninteractive}"
+RPC_ALLOW_IP="${RPC_ALLOW_IP:-0.0.0.0/0}"
 RPC_BIND="${RPC_BIND:-0.0.0.0}"
 
-exec bitcoind -port=$RPC_PORT \
-    -rpcuser=$RPC_USER \
-    -rpcpassword=$RPC_PASS \
+TESTNET="${TESTNET:-0}"
+DEBIAN_FRONTEND="${DEBIAN_FRONTEND:-noninteractive}"
+EXTRAFLAGS="${EXTRAFLAGS:-}"
+
+mkdir -p ${DATA_DIR} && 
+    exec bitcoind -rpcport=$RPC_PORT \
+    -datadir=$DATA_DIR \
     -rpcallowip=$RPC_ALLOW_IP \
     -rpcbind=$RPC_BIND \
-    -listen \
+    -rpcuser=$RPC_USER \
+    -rpcpassword=$RPC_PASS \
+    -rest \
     -server \
     -testnet=$TESTNET \
     $EXTRAFLAGS
