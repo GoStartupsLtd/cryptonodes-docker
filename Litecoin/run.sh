@@ -1,7 +1,5 @@
 #!/bin/bash
 
-DATA_DIR="${DATA_DIR-/home/litecoind}"
-
 RPC_USER="${RPC_USER:-user}"
 RPC_PASS="${RPC_PASS:-pass}"
 RPC_PORT="${RPC_PORT:-22556}"
@@ -13,7 +11,6 @@ DEBIAN_FRONTEND="${DEBIAN_FRONTEND:-noninteractive}"
 EXTRAFLAGS="${EXTRAFLAGS:-}"
 
 exec litecoind -rpcport=$RPC_PORT \
-    -datadir=$DATA_DIR \
     -rpcallowip=$RPC_ALLOW_IP \
     -rpcbind=$RPC_BIND \
     -rpcuser=$RPC_USER \
