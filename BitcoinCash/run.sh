@@ -1,5 +1,4 @@
 #!/bin/bash
-DATA_DIR="${DATA_DIR:-/home/bitcoincash}"
 
 RPC_USER="${RPC_USER:-user}"
 RPC_PASS="${RPC_PASS:-pass}"
@@ -13,7 +12,6 @@ EXTRAFLAGS="${EXTRAFLAGS:-}"
 
 mkdir -p ${DATA_DIR} && 
     exec bitcoind -rpcport=$RPC_PORT \
-    -datadir=$DATA_DIR \
     -rpcallowip=$RPC_ALLOW_IP \
     -rpcbind=$RPC_BIND \
     -rpcuser=$RPC_USER \
