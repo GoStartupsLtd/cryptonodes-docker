@@ -1,7 +1,5 @@
 #!/bin/bash
 
-DATA_DIR="${DATA_DIR:-/home/bgoldd}"
-
 RPC_USER="${RPC_USER:-user}"
 RPC_PASS="${RPC_PASS:-pass}"
 RPC_PORT="${RPC_PORT:-8336}"
@@ -14,7 +12,6 @@ EXTRAFLAGS="${EXTRAFLAGS:-""}"
 
 mkdir -p ${DATA_DIR} && 
     exec bgoldd -rpcport=$RPC_PORT \
-    -datadir=$DATA_DIR \
     -rpcallowip=$RPC_ALLOW_IP \
     -rpcbind=$RPC_BIND \
     -rpcuser=$RPC_USER \
