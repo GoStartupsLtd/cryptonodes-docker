@@ -10,8 +10,7 @@ TESTNET="${TESTNET:-0}"
 DEBIAN_FRONTEND="${DEBIAN_FRONTEND:-noninteractive}"
 EXTRAFLAGS="${EXTRAFLAGS:-}"
 
-mkdir -p ${DATA_DIR} && 
-    exec bitcoind -rpcport=$RPC_PORT \
+exec bitcoind -rpcport=$RPC_PORT \
     -rpcallowip=$RPC_ALLOW_IP \
     -rpcbind=$RPC_BIND \
     -rpcuser=$RPC_USER \
