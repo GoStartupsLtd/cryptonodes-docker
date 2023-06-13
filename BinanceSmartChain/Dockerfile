@@ -8,7 +8,7 @@ RUN apt update && apt install wget python3 ca-certificates curl gcc git unzip li
     apt-get clean && \
     apt-get autoremove
 
-# # Install Golang
+# Install Golang
 RUN curl -L https://go.dev/dl/go1.19.linux-amd64.tar.gz -o golang.tar.gz && \
     tar -C /usr/local -xzf golang.tar.gz && \
     rm golang.tar.gz
