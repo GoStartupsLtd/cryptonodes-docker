@@ -36,7 +36,7 @@ RUN apt update && apt upgrade -y && apt install -y curl gpg && \
     apt-get clean && \
     apt-get autoremove
 
-EXPOSE 8547 8548 30303 30303/udp
+EXPOSE 8545 8546 30303 30303/udp
 
 COPY --from=build /usr/local/bin/geth /usr/local/bin/
 COPY ./run.sh ./run.sh

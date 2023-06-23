@@ -48,7 +48,7 @@ COPY --from=build /home/genesis.json /home/genesis.json
 
 RUN mkdir ./init-dir && geth --datadir ./init-dir init genesis.json && cp -rn ./init-dir /root/.ethereum
 
-EXPOSE 18545 18546 30311 30311/udp
+EXPOSE 8545 8547 30303 30303/udp
 
 COPY ./run.sh ./run.sh
 RUN chmod 777 ./run.sh
