@@ -38,6 +38,6 @@ RUN chmod 777 ./run.sh
 
 COPY --from=build /usr/local/bin/bgoldd /usr/local/bin
 
-EXPOSE 8336
+EXPOSE 8332
 
 ENTRYPOINT ./run.sh

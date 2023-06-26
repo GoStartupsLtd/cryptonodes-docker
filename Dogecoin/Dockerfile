@@ -21,6 +21,7 @@ RUN cd dogecoin && \
     make && \
     make install && \
     strip /usr/local/bin/dogecoind && \
+    strip /usr/local/bin/dogecoin-cli && \
     cd ../ && \
     rm -rf dogecoin
 
@@ -32,10 +33,11 @@ RUN apt update && apt-get install -y --no-install-recommends build-essential lib
     apt-get autoremove
 
 COPY --from=build /usr/local/bin/dogecoind /usr/local/bin
+COPY --from=build /usr/local/bin/dogecoin-cli /usr/local/bin
 COPY ./run.sh ./run.sh
 RUN chmod 777 ./run.sh
 
-EXPOSE 22554
+EXPOSE 22555
 
 ENTRYPOINT ./run.sh
 
