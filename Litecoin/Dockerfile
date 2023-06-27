@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
 COPY --from=build /usr/local/bin/litecoind /usr/local/bin
 COPY --from=build /usr/local/bin/litecoin-cli /usr/local/bin
 COPY ./run.sh ./run.sh
-RUN chmod 777 ./run.sh
+RUN chmod u+x ./run.sh
 
 EXPOSE 9332
 

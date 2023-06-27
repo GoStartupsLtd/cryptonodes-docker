@@ -35,7 +35,7 @@ RUN apt update && apt-get install -y --no-install-recommends build-essential lib
 COPY --from=build /usr/local/bin/dogecoind /usr/local/bin
 COPY --from=build /usr/local/bin/dogecoin-cli /usr/local/bin
 COPY ./run.sh ./run.sh
-RUN chmod 777 ./run.sh
+RUN chmod u+x ./run.sh
 
 EXPOSE 22555
 

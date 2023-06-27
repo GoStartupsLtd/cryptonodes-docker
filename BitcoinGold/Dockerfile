@@ -22,7 +22,8 @@ RUN cd BTCGPU && \
     make install && \
     cd ../ && \
     rm -rf BTCGPU && \
-    strip /usr/local/bin/bgoldd
+    strip /usr/local/bin/bgoldd && \
+    strip /usr/local/bin/bgold-cli
 
 FROM debian:10-slim
 
@@ -34,10 +35,11 @@ RUN apt update && apt upgrade -y && apt install -y libb2-dev curl gpg wget libss
     apt-get autoremove
 
 COPY ./run.sh ./run.sh
-RUN chmod 777 ./run.sh
+RUN chmod u+x ./run.sh
 
 COPY --from=build /usr/local/bin/bgoldd /usr/local/bin
+COPY --from=build /usr/local/bin/bgold-cli /usr/local/bin
 
-EXPOSE 8332
+EXPOSE 8333
 
 ENTRYPOINT ./run.sh
