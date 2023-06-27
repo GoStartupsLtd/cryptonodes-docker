@@ -51,6 +51,6 @@ RUN mkdir ./init-dir && geth --datadir ./init-dir init genesis.json && cp -rn ./
 EXPOSE 8545 8547 30303 30303/udp
 
 COPY ./run.sh ./run.sh
-RUN chmod 777 ./run.sh
+RUN chmod u+x ./run.sh
 
 ENTRYPOINT ./run.sh

@@ -45,5 +45,6 @@ EXPOSE 8545 8546 30303 30303/udp
 COPY --from=build /usr/local/bin/geth /usr/local/bin/
 COPY --from=build /home/prysm.sh ./prysm.sh
 COPY ./run.sh ./run.sh
+RUN chmod u+x ./run.sh
 
 ENTRYPOINT ./run.sh
