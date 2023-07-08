@@ -1,28 +1,39 @@
-FROM debian:10 AS build
+FROM debian:10-slim AS build
 
 WORKDIR /home
 
-RUN apt update && apt upgrade -y && apt install -y curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common wget
+# Install packages
+RUN apt update && apt install curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common binutils -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean && \
+    apt-get autoremove
 
+# Install node
+ENV BITCOIN_CASH_LATEST_RELEASE=https://api.github.com/repos/bitcoin-cash-node/bitcoin-cash-node/releases/latest
 
-ENV BITCOIN_CASH_LATEST_VERSION=https://api.github.com/repos/bitcoin-cash-node/bitcoin-cash-node/releases/latest
+RUN export BITCOIN_CASH_VERSION=$(curl -s ${BITCOIN_CASH_LATEST_RELEASE} | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'])") && \
+    echo "Installing version: $BITCOIN_CASH_VERSION" && \
+    git clone -b ${BITCOIN_CASH_VERSION} https://github.com/bitcoin-cash-node/bitcoin-cash-node
 
-RUN export BITCOIN_VERSION=$(curl -s ${BITCOIN_CASH_LATEST_VERSION} | python3 -c "import sys, json; print(json.load(sys.stdin)['tag_name'].replace('v', ''))") && \
-    echo "Installing version: $BITCOIN_CASH_LATEST_VERSION" && \
-    git clone https://github.com/bitcoin-cash-node/bitcoin-cash-node && \
-    cd bitcoin-cash-node && \
-    git checkout v${BITCOIN_VERSION} && \
+RUN cd bitcoin-cash-node && \
     mkdir build && \
     cd build && \
     cmake -GNinja .. -DBUILD_BITCOIN_WALLET=OFF -DBUILD_BITCOIN_QT=OFF && \
     ninja && \
-    ln -s /home/bitcoin-cash-node/build/src/bitcoind /usr/local/bin
+    # Strips debug information from the binary making it smaller
+    strip src/bitcoind && \
+    cp src/bitcoind /usr/local/bin && \
+    cd ../../ && \
+    rm -rf bitcoin-cash-node
 
-FROM debian:10
+FROM debian:10-slim
 
 WORKDIR /home
 
-RUN apt update && apt upgrade -y && apt install -y curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common wget
+RUN apt update && apt upgrade -y && apt install -y curl gpg wget libssl-dev build-essential cmake git libboost-chrono-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libevent-dev libminiupnpc-dev libzmq3-dev help2man ninja-build python3 apt-transport-https ca-certificates gnupg software-properties-common wget && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean && \
+    apt-get autoremove
 
 COPY --from=build /usr/local/bin/bitcoind /usr/local/bin
 COPY ./run.sh ./run.sh
